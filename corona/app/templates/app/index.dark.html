@@ -1,0 +1,428 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from htmldemo.net/jibanu/jibanu/index-dark.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 16 Feb 2023 16:21:47 GMT -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jibanu - Coronavirus Stats Dashboard Template</title>
+
+    <!--== Favicon ==-->
+    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon" />
+
+    <!--== Google Fonts ==-->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,300;1,400&amp;display=swap" rel="stylesheet">
+
+    <!-- build:css assets/css/app.min.css -->
+    <!--== jqvmap Min CSS ==-->
+    <link href="/static/assets/css/jqvmap.min.css" rel="stylesheet" />
+    <!--== ChartJS Min CSS ==-->
+    <link href="/static/assets/css/chart.min.css" rel="stylesheet" />
+    <!--== DataTables Min CSS ==-->
+    <link href="/static/assets/css/datatables.min.css" rel="stylesheet" />
+    <!--== Select2 Min CSS ==-->
+    <link href="/static/assets/css/select2.min.css" rel="stylesheet" />
+    <!--== Bootstrap Min CSS ==-->
+    <link href="/static/assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!--== Main Style CSS ==-->
+    <link href="/static/assets/css/style.css" rel="stylesheet" />
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+    <!-- endbuild -->
+    <!--[if lt IE 9]>
+    <script src="{% static '//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js' %}"></script>
+    <script src="{% static '//oss.maxcdn.com/respond/1.4.2/respond.min.js' %}"></script>
+    <![endif]-->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 16px Arial;
+        }
+
+        /*the container must be positioned relative:*/
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+        }
+
+        input {
+            border: 1px solid transparent;
+            background-color: #f1f1f1;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+            input[type=text] {
+                background-color: #f1f1f1;
+                width: 100%;
+            }
+
+            input[type=submit] {
+                background-color: DodgerBlue;
+                color: #fff;
+                cursor: pointer;
+            }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            /*position the autocomplete items to be the same width as the container:*/
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+
+            .autocomplete-items div {
+                padding: 10px;
+                cursor: pointer;
+                background-color: #fff;
+                border-bottom: 1px solid #d4d4d4;
+            }
+
+                /*when hovering an item:*/
+                .autocomplete-items div:hover {
+                    background-color: #e9e9e9;
+                }
+
+        /*when navigating through the items using the arrow keys:*/
+        .autocomplete-active {
+            background-color: DodgerBlue !important;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body class="body-dark">
+    <!--== Start Header Wrapper ==-->
+    <header class="header-wrapper">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-4">
+                    <div class="logo-wrap">
+                        <a href="index.html"><img src="{% static 'assets/img/logo.png' %}" alt="logo" /></a>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="last-update-wrap">
+                        <p class="mb-0">Update: <span class="last-update"></span></p>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="navbar-wrap">
+                        <nav class="menubar">
+                            <ul class="nav">
+                                <li><a href="index-dark.html">Dashboard</a></li>
+                                <li><a href="map-dark.html">Map</a></li>
+                                <li><a href="badge-dark.html">Badge</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!--== End Header Wrapper ==-->
+    <!--== Start Main Content Wrapper ==-->
+    <main class="main-content-wrapper" id="main">
+        <div class="content-section-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="row mtn-25 worldwide-stats">
+                            {% for item in world %}
+                            <div class="col-sm-6">
+                                <div class="tracker-block-style-1">
+                                    <div class="tracker-block">
+                                        <div class="tracker-block__icon">
+                                            <img src="{% static 'assets/img/corona-icon-red.png' %}" alt="corona-icon" />
+                                        </div>
+                                        <div class="tracker-block__content">
+                                            <h4>Coronavirus Cases</h4>
+                                            <h2>
+                                                <span class="cases-no infected">{{item.TotalCases}}</span> <!--<span class="new-no">(+<span class="today_infected">000,000</span>)--></span>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="tracker-block-style-1">
+                                    <div class="tracker-block">
+                                        <div class="tracker-block__icon">
+                                            <img src="{% static 'assets/img/corona-icon-green.png' %}" alt="corona-icon" />
+                                        </div>
+                                        <div class="tracker-block__content">
+                                            <h4>Total Recovered</h4>
+                                            <h2>
+                                                <span class="cases-no recovered">{{item.TotalRecovered}}</span> <span class="new-no">
+                                                    <!--(+<span class="today_recovered">000,000</span>)-->
+                                                </span>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="tracker-block-style-1">
+                                    <div class="tracker-block">
+                                        <div class="tracker-block__icon">
+                                            <img src="{% static 'assets/img/corona-icon-red.png' %}" alt="corona-icon" />
+                                        </div>
+                                        <div class="tracker-block__content">
+                                            <h4>Total Death</h4>
+                                            <h2>
+                                                <span class="cases-no deaths">{{item.TotalDeath}}</span> 
+                                                <!--<span class="new-no">(+<span class="today_deaths">000,000</span>)</span>-->
+                                            </h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="tracker-block-style-1">
+                                    <div class="tracker-block">
+                                        <div class="tracker-block__icon">
+                                            <img src="{% static 'assets/img/corona-icon-red.png' %}" alt="corona-icon" />
+                                        </div>
+                                        <div class="tracker-block__content">
+                                            <h4>Active Cases</h4>
+                                            <h2><span class="cases-no current_cases">{{item.ActiveCases}}</span></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 country-choose-stats">
+                                <div class="tracker-block tracker-block--2">
+                                    <div class="tracker-block__header with-option">
+                                        <div class="section-head">
+                                            <h2>Coronavirus(COVID-19)</h2>
+                                            <p>Updated <span class="last-update"></span> per request</p>
+                                        </div>
+                                        <div class="select-country">
+                                            <label for="select1" class="sr-only">Country</label>
+                                            <select class="country" id="select1" name="country"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 tracker-block__body">
+                                        <div class="track-item">
+                                            <p class="track-item__title">Confirmed</p>
+                                            <h4 class="track-item__no infected">{{item.NewCases}}</h4>
+                                        </div>
+
+                                        <div class="track-item">
+                                            <p class="track-item__title track-item__title-deaths">Deaths</p>
+                                            <h4 class="track-item__no deaths">{{item.NewDeath}}</h4>
+                                        </div>
+
+                                        <div class="track-item">
+                                            <p class="track-item__title track-item__title-recovered">Recovered</p>
+                                            <h4 class="track-item__no recovered">{{item.NewRecovered}}</h4>
+                                        </div>
+                                        <div class="track-item">
+                                            <p class="track-item__title track-item__title-deaths">Critical</p>
+                                            <h4 class="track-item__no deaths">{{item.SeriousCritical}}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>{%endfor%}
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6">
+                        <div class="map-status-wrap" id="map-status-report">
+                            <div class="map-status-colors">
+                                <div class="map-widget map-report position-relative map-report">
+                                    <div class="corona-map-tracker" id="tracker-map"></div>
+
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="cases-by-country" id="cases-by-country">
+                            <div class="cases-by-country__top">
+                                <div class="header-content d-flex">
+                                    <form autocomplete="off" action="/action_page.php">
+                                        <div class="autocomplete" style="width:300px;">
+                                            <input id="myInput" type="text" name="myCountry" placeholder="Country">
+                                        </div>
+                                        <button type="button" class="btn btn-primary">
+                                            <svg width="10px" height="10px" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#8080ff" stroke="#8080ff">
+
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+
+                                                <g id="SVGRepo_iconCarrier">
+
+                                                    <path d="M492.5 917.7c-247 0-447.9-200.9-447.9-447.9s200.9-448 447.9-448 447.9 200.9 447.9 447.9-200.9 448-447.9 448z m0-810.6c-200 0-362.6 162.7-362.6 362.6s162.7 362.6 362.6 362.6 362.6-162.7 362.6-362.6-162.6-362.6-362.6-362.6z" fill="#ffffff" />
+
+                                                    <path d="M951.1 971c-10.9 0-21.8-4.2-30.2-12.5l-96-96c-16.7-16.7-16.7-43.7 0-60.3 16.6-16.7 43.7-16.7 60.3 0l96 96c16.7 16.7 16.7 43.7 0 60.3-8.2 8.4-19.2 12.5-30.1 12.5z" fill="#ffffff" />
+
+                                                </g>
+
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="cases-by-country__bottom">
+                                <ul class="cases-country-lists"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="list-view table-responsive" id="list-view">
+                            <table class="list-view__table display table">
+                                <thead class="list-view__head">
+                                    <tr>
+                                        <th>Country</th>
+                                        <!--<th>Population</th>-->
+                                        <th>Total Cases</th>
+                                        <th>New Cases</th>
+                                        <th>Total Deaths</th>
+                                        <th>Fatality Rate %</th>
+                                        <th>New Deaths</th>
+                                        <th>Newly Recovered </th>
+                                        <th>Total Recovered</th>
+
+                                        <th>Active Cases</th>
+                                        <th>Critical</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="list-view__body">
+                                    {% for item in page_obj.object_list %}
+                                    <tr>
+                                        <td>{{item.country}}</td>
+                                        <!--<td>{{item.Population}}</td>-->
+                                        <td>{{item.TotalCases}}</td>
+                                        <td>{{item.NewCases}}</td>
+                                        <td>{{item.TotalDeath}}</td>
+                                        <td>{{item.Fatality}} %</td>
+                                        <td>{{item.NewDeath}}</td>
+                                        <td>{{item.NewRecovered}}</td>
+                                        <td>{{item.TotalRecovered}}</td>
+                                        <td>{{item.ActiveCases}}</td>
+                                        <td>{{item.SeriousCritical}}</td>
+
+                                    </tr>
+                                    {%endfor%}
+
+                                </tbody>
+                                <nav aria-label="..." style="cursor:focus">
+                                    {% if page_obj.has_other_pages %}
+                                    <ul class="pagination">
+                                        {% if page_obj.has_previous %}
+                                        <li class="page-item disable">
+
+                                            <span class="page-link" id="prev" hx-get="{% url 'home' %}?page={{ page_obj.previous_page_number }}"
+                                                  hx-target="body"
+                                                  hx-swap="outerHTML">&laquo;Previous</span>
+                                        </li>
+                                        {% else %}
+                                        <li class="disabled"><span>&laquo;</span></li>
+                                        {% endif %}
+
+                                        {% for i in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == i %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ i }} <span class="sr-only"></span></span>
+                                        </li>
+                                        {% else %}
+                                        <li class="page-item">
+                                            <span class="page-link" id="prev" hx-get="{% url 'home' %}?page={{ i }}"
+                                                  hx-target="body"
+                                                  hx-swap="outerHTML">{{ i }}</span>
+                                        </li>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <span class="page-link" id="prev" hx-get="{% url 'home' %}?page={{ page_obj.next_page_number }}"
+                                                  hx-target="body"
+                                                  hx-swap="outerHTML">&raquo;Next</span>
+                                        </li>
+                                        {% else %}
+                                        <li class="disabled"><span>&raquo;End</span></li>
+                                        {% endif %}
+                                    </ul>
+                                    {%endif%}
+                                </nav>
+                                
+                               
+                              
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+                  
+    </main>
+    <!--== End Main Content Wrapper ==-->
+    <!--=======================Javascript============================-->
+    <!-- build:js assets/js/app.min.js -->
+    <!--=== Modernizr Min Js ===-->
+    <script src="{% static 'assets/js/modernizr.min.js' %}"></script>
+    <!--=== jQuery Min Js ===-->
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <!--=== jQuery Migration Min Js ===-->
+    <script src="{% static 'assets/js/jquery-migrate.min.js' %}"></script>
+    <!--=== Popper Min Js ===-->
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <!--=== Bootstrap Min Js ===-->
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <!--=== Select2 Min Js ===-->
+    <script src="{% static 'assets/js/select2.full.min.js' %}"></script>
+    <!--=== Data Table Min Js ===-->
+    <script src="{% static 'assets/js/datatables.min.js' %}"></script>
+    <!--=== ChartJS Min Js ===-->
+    <script src="{% static 'assets/js/chart.min.js' %}"></script>
+    <!--=== jQuery Vector Map Min Js ===-->
+    <script src="{% static 'assets/js/jquery.vmap.min.js' %}"></script>
+    <!--=== jQuery Vector World Min Js ===-->
+    <script src="{% static 'assets/js/jquery.vmap.world.js' %}"></script>
+
+    <!--=== APP Js ===-->
+    <script src="{% static 'assets/js/app.js' %}"></script>
+    <!--=== Active Js ===-->
+    <script src="{% static 'assets/js/active.js' %}"></script>
+
+    <!-- endbuild -->
+</body>
+
+
+<!-- Mirrored from htmldemo.net/jibanu/jibanu/index-dark.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 16 Feb 2023 16:21:54 GMT -->
+</html>
