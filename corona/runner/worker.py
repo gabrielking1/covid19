@@ -8,8 +8,7 @@ def worker():
     url = "https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/npm-covid-data/world"
 
     headers = {
-	"X-RapidAPI-Key": "148de2c9d7mshb66037a0a2757e3p12e732jsn8bdf81c925cf",
-	"X-RapidAPI-Host": "vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com"
+# 	YOUR API KEY AND URL
     }
 
     response = requests.request("GET", url, headers=headers)
@@ -33,8 +32,7 @@ def worker():
     url = "https://vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com/api/npm-covid-data/"
 
     headers = {
-	"X-RapidAPI-Key": "148de2c9d7mshb66037a0a2757e3p12e732jsn8bdf81c925cf",
-	"X-RapidAPI-Host": "vaccovid-coronavirus-vaccine-and-treatment-tracker.p.rapidapi.com"
+# 	YOUR API KEY AND URL
     }
 
     response = requests.request("GET", url, headers=headers)
